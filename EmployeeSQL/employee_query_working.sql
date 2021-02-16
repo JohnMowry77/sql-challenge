@@ -1,64 +1,3 @@
--- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
--- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
---Use the Diagram db app to manipulate date and assign keys
--- export as postgres into VS Code
--- copy/paste into pgAdmin4
-
---DROP TABLE IF EXISTS Dept_Emp;
-
-CREATE TABLE "Departments" (
-    "dept_no" varchar   NOT NULL,
-    "dept_name" varchar   NOT NULL,
-    CONSTRAINT "pk_Departments" PRIMARY KEY ("dept_no")
-);
-
-CREATE TABLE "Title" (
-    "title_id" varchar   NOT NULL,
-    "title" varchar   NOT NULL,
-    CONSTRAINT "pk_Title" PRIMARY KEY ("title_id")
-);
-
-CREATE TABLE "Employees" (
-    "emp_no" varchar   NOT NULL,
-    "emp_title_id" varchar   NOT NULL,
-    "birth_date" date   NOT NULL,
-    "first_name" varchar   NOT NULL,
-    "last_name" varchar   NOT NULL,
-    "sex" varchar   NOT NULL,
-    "hire_date" date   NOT NULL,
-    CONSTRAINT "pk_Employees" PRIMARY KEY ("emp_no")
-);
-
-CREATE TABLE "Salaries" (
-    "emp_no" varchar   NOT NULL,
-    "salary" int   NOT NULL,
-    CONSTRAINT "pk_Salaries" PRIMARY KEY ("emp_no")
-);
-
---Can you rename table without drop? Due to import- DO NOT DROP
-CREATE TABLE dept_emp (
-	emp_no varchar   NOT NULL,    
-	dept_no VARCHAR   NOT NULL,    
-	PRIMARY KEY (emp_no, dept_no)
-);
-drop table "Dept_Manager";
-
---Dept_manager is a composite table where dept_no & emp_no are primary keys. emp_no goes to employee_table while dept_no goes to deptartments table
-CREATE TABLE "Dept_Manager" (
-    "dept_no" varchar   NOT NULL,
-    "emp_no" varchar   NOT NULL,
-	PRIMARY KEY (dept_no, emp_no)
-);
-
-ALTER TABLE "Salaries" ADD CONSTRAINT "fk_Salaries_emp_no" FOREIGN KEY("emp_no")
-REFERENCES "Employees" ("emp_no");
-
-ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_Dept_Emp_dept_no" FOREIGN KEY("dept_no")
-REFERENCES "Departments" ("dept_no");
-
-ALTER TABLE "Dept_Manager" ADD CONSTRAINT "fk_Dept_Manager_dept_no" FOREIGN KEY("dept_no")
-REFERENCES "Departments" ("dept_no");
-
 --Run each line to see the imported data
 -- Need  assign as alias. Not required
 SELECT * FROM "Departments"
@@ -89,7 +28,7 @@ drop view salary;
 --drop salary view since not in ReadMe
 */
 
-Create view salary as
+create view salary as
 select e.emp_no, s.salary as salary
 from "Employees" as e
 join "Salaries" as s
@@ -107,7 +46,7 @@ join "Salaries"
 on "Salaries".emp_no="Employee".emp_no
 */
 --Use first letter alias:
-Create view employee_info as
+create view employee_info as
 select e.emp_no, e.last_name, e.first_name, e.sex, s.salary as salary
 from "Employees" as e
 join "Salaries" as s
@@ -134,12 +73,12 @@ drop view hire_year_1986
 
 -- use first letter alias:
 create view hire_year_1986 as
-Select e.first_name, e.last_name, e.hire_date 
-FROM "Employees" as e
+select e.first_name, e.last_name, e.hire_date 
+from "Employees" as e
 --Select * from "Employees"
-WHERE hire_date BETWEEN '1986-01-01' and '1986-12-31';
+where hire_date between '1986-01-01' and '1986-12-31';
 
-Select *
+select *
 from hire_year_1986
 
 /* 3. List the manager of each department with the following information: 
@@ -176,7 +115,7 @@ on de.emp_no=e.emp_no
 join "Departments" as d
 on d.dept_no=dm.dept_no
 
-Select *
+select *
 from department_manager
 
 --Need to find just the manager now?
@@ -214,7 +153,7 @@ drop view employee_department;
 
 --use first letter alias:
 
-Create view employee_department as
+create view employee_department as
 select e.emp_no, e.last_name, e.first_name, d.dept_name
 from "Employees" as e
 join dept_emp as de
@@ -222,7 +161,7 @@ on de.emp_no=e.emp_no
 join "Departments" as d
 on d.dept_no=de.dept_no
 
-Select *
+select *
 from employee_department
 
 
@@ -238,6 +177,7 @@ Select *
 From Hercules_B
 drop view Hercules_B;
 */
+
 /* This next code is not correct, do not use:
 Select *
 from "Employees"
@@ -252,8 +192,8 @@ from "Employees" as e
 where e.first_name='Hercules'
 and e.last_name like'B%';
 
-Select *
-From Hercules_B
+select *
+from Hercules_B
 
 SELECT * FROM "Title"
 SELECT * FROM "Employees"
@@ -275,8 +215,10 @@ from employee_department
 where dept_name='Sales'
 
 -- 7. List all employees in the Sales and Development departments, including their employee number, last name, first name, and department name.
-
-
+select *
+from employee_department
+where dept_name='Sales'
+or dept_name='Development'
 
 -- 8. In descending order, list the frequency count of employee last names, i.e., how many employees share each last name.
 create view frequency_last_names as 
