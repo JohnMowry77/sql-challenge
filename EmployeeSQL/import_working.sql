@@ -41,17 +41,19 @@ CREATE TABLE dept_emp (
 	dept_no VARCHAR   NOT NULL,    
 	PRIMARY KEY (emp_no, dept_no)
 );
+drop table "Dept_Manager";
+
 --Dept_manager is a composite table where dept_no & emp_no are primary keys. emp_no goes to employee_table while dept_no goes to deptartments table
 CREATE TABLE "Dept_Manager" (
     "dept_no" varchar   NOT NULL,
-    "emp_no" int   NOT NULL,
+    "emp_no" varchar   NOT NULL,
 	PRIMARY KEY (dept_no, emp_no)
 );
 
 ALTER TABLE "Salaries" ADD CONSTRAINT "fk_Salaries_emp_no" FOREIGN KEY("emp_no")
 REFERENCES "Employees" ("emp_no");
 
-ALTER TABLE "Dept_Emp" ADD CONSTRAINT "fk_Dept_Emp_dept_no" FOREIGN KEY("dept_no")
+ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_Dept_Emp_dept_no" FOREIGN KEY("dept_no")
 REFERENCES "Departments" ("dept_no");
 
 ALTER TABLE "Dept_Manager" ADD CONSTRAINT "fk_Dept_Manager_dept_no" FOREIGN KEY("dept_no")
@@ -94,12 +96,10 @@ on "Salaries".emp_no="Employees".emp_no
 --Since we saved the view we can call the alias:
 select * from employee_info
 select * from salary
- 
---drop salary view
+--drop salary view since not in ReadMe
 drop view salary;
 
 -- 2. List first name, last name, and hire date for employees who were hired in 1986.
-
 --select "Employees".hire_date from "Employees";
 create view hire_year_1986 as
 Select "Employees".first_name, "Employees".last_name, "Employees".hire_date FROM "Employees"
@@ -109,21 +109,47 @@ WHERE hire_date BETWEEN '1986-01-01' and '1986-12-31';
 /* 3. List the manager of each department with the following information: 
 department number, department name, the manager's employee number, last name, first name.
 */
-SELECT * FROM "Departments"
+--SELECT * FROM "Departments"
+--SELECT "Departments".dept_no, "Departments".dept_name FROM "Departments"
+create view department_manager as
+--select "Dept_Manager".*, "Employees".*
+select "Dept_Manager".dept_no, "Employees".emp_no, "Employees".last_name, "Employees".first_name, "Departments".dept_name
+from "Dept_Manager"
+join "Employees"
+on "Employees".emp_no="Dept_Manager".emp_no
+join dept_emp
+on dept_emp.emp_no="Employees".emp_no
+join "Departments"
+on "Departments".dept_no="Dept_Manager".dept_no
 
-SELECT "Departments".dept_no, "Departments".dept_name FROM "Departments"
-
-
+--Need to find just the manager now?
 SELECT * FROM "Title"
 SELECT * FROM "Employees"
 SELECT * FROM "Salaries"
 SELECT * FROM dept_emp
 SELECT * FROM "Dept_Manager"
+SELECT * FROM "Departments"
 
+-- 4. List the department of each employee with the following information: 
+-- employee number, last name, first name, and department name.
+/*
+select "Departments".dept_name , dept_emp.dept_no, "Employees".emp_no, "Employees".last_name, "Employees".first_name
+from "Departments"
+join dept_emp
+on dept_emp.dept_no="Departments".dept_no
+join "Employees"
+on "Employees".emp_no=dept_emp.emp_no
+*/
 
--- 4. List the department of each employee with the following information: employee number, last name, first name, and department name.
+select "Employees".emp_no, "Employees".last_name, "Employees".first_name, "Departments".dept_name
+from "Employees"
+join dept_emp
+on dept_emp.emp_no="Employees".emp_no
+join "Departments"
+on "Departments".dept_no=dept_emp.dept_no
 
 -- 5. List first name, last name, and sex for employees whose first name is "Hercules" and last names begin with "B."
+
 
 -- 6. List all employees in the Sales department, including their employee number, last name, first name, and department name.
 
