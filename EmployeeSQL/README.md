@@ -43,7 +43,7 @@ Inspect the CSVs and sketch out an ERD of the tables. Feel free to use a tool li
 
 #### Data Analysis
 
-Once you have a complete database, do the following:
+Once I have a complete database, I did the following:
 
 1. List the following details of each employee: employee number, last name, first name, sex, and salary.
 
@@ -60,3 +60,6 @@ Once you have a complete database, do the following:
 7. List all employees in the Sales and Development departments, including their employee number, last name, first name, and department name.
 
 8. In descending order, list the frequency count of employee last names, i.e., how many employees share each last name.
+
+
+Bonus: attempted to do bonus but couldn't get it to work. 
